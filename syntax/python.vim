@@ -76,7 +76,7 @@ endif
 " Keywords
 "
 
-syn keyword pythonStatement     break continue del return pass yield global assert lambda with
+syn keyword pythonStatement     break continue del return pass yield global assert lambda with match
 syn keyword pythonStatement     raise nextgroup=pythonExClass skipwhite
 syn keyword pythonStatement     def nextgroup=pythonFunction skipwhite
 syn keyword pythonStatement     class nextgroup=pythonClass skipwhite
@@ -109,16 +109,16 @@ else
     syn match   pythonStatement   '\<async\s\+def\>' nextgroup=pythonFunction skipwhite
     syn match   pythonStatement   '\<async\s\+with\>'
     syn match   pythonStatement   '\<async\s\+for\>'
-    syn cluster pythonExpression contains=pythonStatement,pythonRepeat,pythonConditional,pythonOperator,pythonNumber,pythonHexNumber,pythonOctNumber,pythonBinNumber,pythonFloat,pythonString,pythonFString,pythonRawString,pythonRawFString,pythonBytes,pythonBoolean,pythonNone,pythonSingleton,pythonBuiltinObj,pythonBuiltinFunc,pythonBuiltinType,pythonClassVar
+    syn cluster pythonExpression contains=pythonStatement,pythonRepeat,pythonConditional,pythonAssignmentOperator,pythonLogicalOperator,pythonNumber,pythonHexNumber,pythonOctNumber,pythonBinNumber,pythonFloat,pythonString,pythonFString,pythonRawString,pythonRawFString,pythonBytes,pythonBoolean,pythonNone,pythonSingleton,pythonBuiltinObj,pythonBuiltinFunc,pythonBuiltinType,pythonClassVar
 endif
 
 
 "
 " Operators
 "
-syn keyword pythonOperator      and in is not or
+syn keyword pythonLogicalOperator      and in is not or
 if s:Enabled('g:python_highlight_operators')
-    syn match pythonOperator        '\V=\|-\|+\|*\|@\|/\|%\|&\||\|^\|~\|<\|>\|!=\|:='
+    syn match pythonAssignmentOperator '\V=\|-\|+\|*\|@\|/\|%\|&\||\|^\|~\|<\|>\|!=\|:='
 endif
 syn match pythonError           '[$?]\|\([-+@%&|^~]\)\1\{1,}\|\([=*/<>]\)\2\{2,}\|\([+@/%&|^~<>]\)\3\@![-+*@/%&|^~<>]\|\*\*[*@/%&|^<>]\|=[*@/%&|^<>]\|-[+*@/%&|^~<]\|[<!>]\+=\{2,}\|!\{2,}=\+' display
 
@@ -432,81 +432,98 @@ if v:version >= 508 || !exists('did_python_syn_inits')
         command -nargs=+ HiLink hi def link <args>
     endif
 
-    HiLink pythonStatement        Statement
-    HiLink pythonRaiseFromStatement   Statement
-    HiLink pythonImport           Include
-    HiLink pythonFunction         Function
-    HiLink pythonFunctionCall     Function
-    HiLink pythonConditional      Conditional
-    HiLink pythonRepeat           Repeat
-    HiLink pythonException        Exception
-    HiLink pythonOperator         Operator
+    HiLink pythonStatement             Statement
+    HiLink pythonRaiseFromStatement    Statement
 
-    HiLink pythonDecorator        Define
-    HiLink pythonDottedName       Function
+    HiLink pythonImport                Include
 
-    HiLink pythonComment          Comment
+    HiLink pythonFunction              Function
+    HiLink pythonFunctionCall          Function
+
+    HiLink pythonConditional           Conditional
+
+    HiLink pythonRepeat                Repeat
+
+    HiLink pythonException             Exception
+
+    HiLink pythonAssignmentOperator    Operator
+    HiLink pythonLogicalOperator       Operator
+
+    HiLink pythonDecorator             Define
+
+    HiLink pythonDottedName            Function
+
+    HiLink pythonComment               Comment
+
     if !s:Enabled('g:python_highlight_file_headers_as_comments')
-        HiLink pythonCoding           Special
-        HiLink pythonRun              Special
+        HiLink pythonCoding            Special
+        HiLink pythonRun               Special
     endif
-    HiLink pythonTodo             Todo
 
-    HiLink pythonError            Error
-    HiLink pythonIndentError      Error
-    HiLink pythonSpaceError       Error
+    HiLink pythonTodo                  Todo
 
-    HiLink pythonString           String
-    HiLink pythonRawString        String
-    HiLink pythonRawEscape        Special
+    HiLink pythonError                 Error
+    HiLink pythonIndentError           Error
+    HiLink pythonSpaceError            Error
 
-    HiLink pythonUniEscape        Special
-    HiLink pythonUniEscapeError   Error
+    HiLink pythonString                String
+    HiLink pythonRawString             String
+
+    HiLink pythonRawEscape             Special
+    HiLink pythonUniEscape             Special
+
+    HiLink pythonUniEscapeError        Error
 
     if s:Python2Syntax()
-        HiLink pythonUniString          String
-        HiLink pythonUniRawString       String
-        HiLink pythonUniRawEscape       Special
-        HiLink pythonUniRawEscapeError  Error
+        HiLink pythonUniString         String
+        HiLink pythonUniRawString      String
+        HiLink pythonUniRawEscape      Special
+        HiLink pythonUniRawEscapeError Error
     else
-        HiLink pythonBytes              String
-        HiLink pythonRawBytes           String
-        HiLink pythonBytesContent       String
-        HiLink pythonBytesError         Error
-        HiLink pythonBytesEscape        Special
-        HiLink pythonBytesEscapeError   Error
-        HiLink pythonFString            String
-        HiLink pythonRawFString         String
+        HiLink pythonBytes             String
+        HiLink pythonRawBytes          String
+        HiLink pythonBytesContent      String
+        HiLink pythonBytesError        Error
+        HiLink pythonBytesEscape       Special
+        HiLink pythonBytesEscapeError  Error
+        HiLink pythonFString           String
+        HiLink pythonRawFString        String
     endif
 
-    HiLink pythonStrFormatting    Special
-    HiLink pythonStrFormat        Special
-    HiLink pythonStrTemplate      Special
+    HiLink pythonStrFormatting         Special
+    HiLink pythonStrFormat             Special
+    HiLink pythonStrTemplate           Special
 
-    HiLink pythonDocTest          Special
-    HiLink pythonDocTest2         Special
+    HiLink pythonDocTest               Special
+    HiLink pythonDocTest2              Special
 
-    HiLink pythonNumber           Number
-    HiLink pythonHexNumber        Number
-    HiLink pythonOctNumber        Number
-    HiLink pythonBinNumber        Number
-    HiLink pythonFloat            Float
-    HiLink pythonNumberError      Error
-    HiLink pythonOctError         Error
-    HiLink pythonHexError         Error
-    HiLink pythonBinError         Error
+    HiLink pythonNumber                Number
+    HiLink pythonHexNumber             Number
+    HiLink pythonOctNumber             Number
+    HiLink pythonBinNumber             Number
 
-    HiLink pythonBoolean          Boolean
-    HiLink pythonNone             Constant
-    HiLink pythonSingleton        Constant
+    HiLink pythonFloat                 Float
 
-    HiLink pythonBuiltinObj       Identifier
-    HiLink pythonBuiltinFunc      Function
-    HiLink pythonBuiltinType      Structure
+    HiLink pythonNumberError           Error
+    HiLink pythonOctError              Error
+    HiLink pythonHexError              Error
+    HiLink pythonBinError              Error
 
-    HiLink pythonExClass          Structure
-    HiLink pythonClass            Structure
-    HiLink pythonClassVar         Identifier
+    HiLink pythonBoolean               Boolean
+
+    HiLink pythonNone                  Constant
+    HiLink pythonSingleton             Constant
+
+    HiLink pythonBuiltinObj            Identifier
+
+    HiLink pythonBuiltinFunc           Function
+
+    HiLink pythonBuiltinType           Structure
+
+    HiLink pythonExClass               Structure
+    HiLink pythonClass                 Structure
+
+    HiLink pythonClassVar              Identifier
 
     delcommand HiLink
 endif
